@@ -1,0 +1,13 @@
+@if (tabs) {
+<div class="tabs-container">
+  <ul>
+    @for (tab of tabs; track $index) {
+    <li (click)="selectTab(tab.title)" [class.active]="tab.active">
+      {{ tab.title }} <button class="btn btn-sm btn-primary" (click)="removeTab(tab.title)">&times;</button>
+    </li>
+    }
+  </ul>
+
+  <ng-content></ng-content>
+</div>
+}

@@ -1,0 +1,31 @@
+.tabs-container {
+  margin-bottom: 24px;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 4px;
+  list-style: none;
+}
+
+li {
+  align-items: center;
+  border-radius: 4px 4px 0 0;
+  border: 1px solid #e3e3e3;
+  bottom: -1px;
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  position: relative;
+}
+
+li:hover:not(.active) {
+  background-color: #f4f4f4;
+  cursor: pointer;
+}
+
+li.active {
+  border-bottom: 1px solid white;
+}

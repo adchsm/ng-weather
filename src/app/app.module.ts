@@ -11,6 +11,8 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from '../environments/environment';
 import { AppComponent } from './app.component';
 import { routing } from './app.routing';
+import { TabComponent } from './components/tabs/tab/tab.component';
+import { TabsContainerComponent } from './components/tabs/tabs-container/tabs-container.component';
 import { CurrentConditionsComponent } from './current-conditions/current-conditions.component';
 import { ForecastsListComponent } from './forecasts-list/forecasts-list.component';
 import { LocationService } from './location.service';
@@ -27,6 +29,8 @@ import { ZipcodeEntryComponent } from './zipcode-entry/zipcode-entry.component';
     ForecastsListComponent,
     CurrentConditionsComponent,
     MainPageComponent,
+    TabsContainerComponent,
+    TabComponent,
   ],
   imports: [
     BrowserModule,
