@@ -9,7 +9,7 @@ import { TabComponent } from '../tab/tab.component';
 })
 export class TabsContainerComponent implements AfterContentInit {
   @ContentChildren(TabComponent) tabs: QueryList<TabComponent>;
-  @Output() tabRemoved: EventEmitter<string> = new EventEmitter();
+  @Output() tabRemoved: EventEmitter<number> = new EventEmitter();
 
   public ngAfterContentInit(): void {
     this.tabs?.changes.pipe(startWith(this.tabs)).subscribe((tabs: QueryList<TabComponent>) => {
@@ -30,7 +30,7 @@ export class TabsContainerComponent implements AfterContentInit {
     tab.active = true;
   }
 
-  protected removeTab(title: string): void {
-    this.tabRemoved.emit(title);
+  protected removeTab(index: number): void {
+    this.tabRemoved.emit(index);
   }
 }

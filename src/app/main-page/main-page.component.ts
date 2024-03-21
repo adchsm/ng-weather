@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { addLocation, removeLocation } from '../store/actions/weather.actions';
+import { addZipcode, removeZipcode } from '../store/actions/weather.actions';
 
 @Component({
   selector: 'app-main-page',
@@ -12,17 +12,18 @@ export class MainPageComponent {
     { title: 'Tab 2', content: 'Content for the second tab' },
     { title: 'Tab 3', content: 'Content for the third tab' },
   ];
+
   constructor(private store: Store) {}
 
-  protected addLocation(location: string): void {
-    this.store.dispatch(addLocation({ location }));
+  protected addLocation(zipcode: string): void {
+    this.store.dispatch(addZipcode({ zipcode }));
   }
 
-  protected removeLocation(location: string): void {
-    this.store.dispatch(removeLocation({ location }));
+  protected removeLocation(index: number): void {
+    this.store.dispatch(removeZipcode({ index }));
   }
 
-  protected testRemoveTab(title: string): void {
-    this.testTabs = this.testTabs.filter((t) => t.title !== title);
+  protected testRemoveTab(index: number): void {
+    this.testTabs.splice(index, 1);
   }
 }

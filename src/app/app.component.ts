@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { getLocationsFromLocalStorage } from './store/actions/weather.actions';
+import { getZipcodesFromLocalStorage } from './store/actions/weather.actions';
 
 @Component({
   selector: 'app-root',
@@ -9,6 +9,6 @@ import { getLocationsFromLocalStorage } from './store/actions/weather.actions';
 })
 export class AppComponent {
   constructor(private store: Store) {
-    this.store.dispatch(getLocationsFromLocalStorage());
+    this.store.dispatch(getZipcodesFromLocalStorage());
   }
 }

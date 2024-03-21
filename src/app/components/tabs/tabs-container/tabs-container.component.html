@@ -1,9 +1,9 @@
 @if (tabs) {
 <div class="tabs-container">
   <ul>
-    @for (tab of tabs; track $index) {
+    @for (tab of tabs; track index; let index = $index) {
     <li (click)="selectTab(tab.title)" [class.active]="tab.active">
-      {{ tab.title }} <button class="btn btn-sm btn-primary" (click)="removeTab(tab.title)">&times;</button>
+      {{ tab.title }} <button class="btn btn-sm btn-primary" (click)="removeTab(index)">&times;</button>
     </li>
     }
   </ul>

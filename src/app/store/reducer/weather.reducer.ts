@@ -1,23 +1,20 @@
 import { createReducer, on } from '@ngrx/store';
 import { WeatherState } from '../../models/weather.models';
-import { addLocation, getLocationsFromLocalStorageSuccess, removeLocation } from '../actions/weather.actions';
+import { addZipcodeSuccess, removeZipcode } from '../actions/weather.actions';
 
 export const initialState: WeatherState = {
-  locations: [],
+  conditionsAndZips: [],
 };
 
 export const weatherReducer = createReducer(
   initialState,
-  on(getLocationsFromLocalStorageSuccess, (state, { locations }) => ({
+  on(addZipcodeSuccess, (state, { conditionsAndZip }) => ({
     ...state,
-    locations,
+    conditionsAndZips: [...state.conditionsAndZips, conditionsAndZip],
   })),
-  on(addLocation, (state, { location }) => ({
-    ...state,
-    locations: [...state.locations, location],
-  })),
-  on(removeLocation, (state, { location }) => ({
-    ...state,
-    locations: [...state.locations.filter((l) => l !== location)],
-  }))
+  on(removeZipcode, (state, { index }) => {
+    const conditionsAndZips = [...state.conditionsAndZips];
+    conditionsAndZips.splice(index, 1);
+    return { ...state, conditionsAndZips };
+  })
 );

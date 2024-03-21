@@ -1,8 +1,7 @@
-import { Injectable, Signal, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
-import { ConditionsAndZip } from './conditions-and-zip.type';
 import { CurrentConditions } from './current-conditions/current-conditions.type';
 import { Forecast } from './forecasts-list/forecast.type';
 
@@ -12,30 +11,14 @@ export class WeatherService {
   static APPID = '8f89eb41dd837a69826719d17d9f2ff3'; // '5a4b2d457ecbef9eb2a71e480b947604';
   static ICON_URL =
     'https://raw.githubusercontent.com/udacity/Sunshine-Version-2/sunshine_master/app/src/main/res/drawable-hdpi/';
-  private currentConditions = signal<ConditionsAndZip[]>([]);
 
   constructor(private http: HttpClient) {}
 
-  addCurrentConditions(zipcode: string): void {
+  getCurrentConditions(zipcode: string): Observable<CurrentConditions> {
     // Here we make a request to get the current conditions data from the API. Note the use of backticks and an expression to insert the zipcode
-    this.http
-      .get<CurrentConditions>(
-        `${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`
-      )
-      .subscribe((data) => this.currentConditions.update((conditions) => [...conditions, { zip: zipcode, data }]));
-  }
-
-  removeCurrentConditions(zipcode: string) {
-    this.currentConditions.update((conditions) => {
-      for (let i in conditions) {
-        if (conditions[i].zip == zipcode) conditions.splice(+i, 1);
-      }
-      return conditions;
-    });
-  }
-
-  getCurrentConditions(): Signal<ConditionsAndZip[]> {
-    return this.currentConditions.asReadonly();
+    return this.http.get<CurrentConditions>(
+      `${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`
+    );
   }
 
   getForecast(zipcode: string): Observable<Forecast> {
