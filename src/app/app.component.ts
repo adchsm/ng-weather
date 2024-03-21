@@ -1,16 +1,14 @@
 import { Component } from '@angular/core';
-import {SwPush, SwUpdate} from '@angular/service-worker';
-import {interval} from 'rxjs';
-import {HttpClient} from '@angular/common/http';
+import { Store } from '@ngrx/store';
+import { getLocationsFromLocalStorage } from './store/actions/weather.actions';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+  styleUrls: ['./app.component.css'],
 })
 export class AppComponent {
-
-    constructor() {
-
-    }
+  constructor(private store: Store) {
+    this.store.dispatch(getLocationsFromLocalStorage());
+  }
 }

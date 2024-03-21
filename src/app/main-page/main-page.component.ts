@@ -1,27 +1,19 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { LocationService } from '../location.service';
-import { WeatherService } from '../weather.service';
+import { Component } from '@angular/core';
+import { Store } from '@ngrx/store';
+import { addLocation, removeLocation } from '../store/actions/weather.actions';
 
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
 })
-export class MainPageComponent implements OnInit {
-  private weatherService = inject(WeatherService);
-  private locationService = inject(LocationService);
-  protected locations = this.locationService.getLocations();
+export class MainPageComponent {
+  constructor(private store: Store) {}
 
-  public ngOnInit(): void {
-    this.locations().forEach((zipcode) => this.weatherService.addCurrentConditions(zipcode));
+  protected addLocation(location: string): void {
+    this.store.dispatch(addLocation({ location }));
   }
 
-  addLocation(zipcode: string): void {
-    this.locationService.addLocation(zipcode);
-    this.weatherService.addCurrentConditions(zipcode);
-  }
-
-  removeLocation(zipcode: string): void {
-    this.locationService.removeLocation(zipcode);
-    this.weatherService.removeCurrentConditions(zipcode);
+  protected removeLocation(location: string): void {
+    this.store.dispatch(removeLocation({ location }));
   }
 }
