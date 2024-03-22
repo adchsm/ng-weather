@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { Actions, createEffect, ofType } from '@ngrx/effects';
+import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
-import { catchError, filter, map, mergeMap, of, tap, withLatestFrom } from 'rxjs';
+import { catchError, filter, interval, map, mergeMap, of, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { WEATHER_CONSTANTS } from '../../constants/weather.constants';
 import { LocationService } from '../../location.service';
 import { WeatherService } from '../../weather.service';
 import {
@@ -10,8 +11,11 @@ import {
   addZipcodeSuccess,
   getZipcodesFromLocalStorage,
   removeZipcode,
+  removeZipcodeSuccess,
+  startPolling,
+  stopPolling,
 } from '../actions/weather.actions';
-import { selectZipcodes } from '../selectors/weather.selectors';
+import { selectConditionByIndex, selectZipcodes } from '../selectors/weather.selectors';
 
 @Injectable()
 export class WeatherEffects {
@@ -53,9 +57,48 @@ export class WeatherEffects {
   updateLocalStorage$ = createEffect(
     () =>
       this.actions$.pipe(
-        ofType(addZipcodeSuccess, removeZipcode),
+        ofType(addZipcodeSuccess, removeZipcodeSuccess),
         withLatestFrom(this.store.select(selectZipcodes)),
         tap(([action, zipcodes]) => this.locationService.updateLocalStorage(zipcodes))
+      ),
+    { dispatch: false }
+  );
+
+  mapAddToStartPolling = createEffect(() =>
+    this.actions$.pipe(
+      ofType(addZipcodeSuccess),
+      map(({ conditionsAndZip }) => startPolling({ zipcode: conditionsAndZip.zip }))
+    )
+  );
+
+  mapRemoveToStartPolling = createEffect(() =>
+    this.actions$.pipe(
+      ofType(removeZipcode),
+      concatLatestFrom(({ index }) => this.store.select(selectConditionByIndex(index))),
+      switchMap(([{ index }, conditionsAndZip]) => [
+        removeZipcodeSuccess({ index }),
+        stopPolling({ zipcode: conditionsAndZip.zip }),
+      ])
+    )
+  );
+
+  startPolling$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(startPolling),
+        mergeMap(({ zipcode }) =>
+          interval(WEATHER_CONSTANTS.REFRESH_TIME)
+            .pipe(
+              takeUntil(
+                this.actions$.pipe(
+                  ofType(stopPolling),
+                  filter((z) => zipcode === z.zipcode),
+                  tap((z) => console.log('Stop polling: ', z.zipcode))
+                )
+              )
+            )
+            .pipe(tap(() => console.log('Poll: ', zipcode)))
+        )
       ),
     { dispatch: false }
   );

@@ -1,6 +1,6 @@
 import { createAction, props } from '@ngrx/store';
-import { ConditionsAndZip } from '../../conditions-and-zip.type';
 import { WEATHER_CONSTANTS } from '../../constants/weather.constants';
+import { ConditionsAndZip } from '../../models/conditions-and-zip.type';
 
 export const getZipcodesFromLocalStorage = createAction(
   `[${WEATHER_CONSTANTS.STORE_KEY}] get zipcodes from local storage`
@@ -23,4 +23,14 @@ export const removeZipcode = createAction(
   props<{ index: number }>()
 );
 
-export const removeZipcodeSuccess = createAction(`[${WEATHER_CONSTANTS.STORE_KEY}] remove zipcode success`);
+export const removeZipcodeSuccess = createAction(
+  `[${WEATHER_CONSTANTS.STORE_KEY}] remove zipcode success`,
+  props<{ index: number }>()
+);
+
+export const startPolling = createAction(
+  `[${WEATHER_CONSTANTS.STORE_KEY}] start polling`,
+  props<{ zipcode: string }>()
+);
+
+export const stopPolling = createAction(`[${WEATHER_CONSTANTS.STORE_KEY}] stop polling`, props<{ zipcode: string }>());

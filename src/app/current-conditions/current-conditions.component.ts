@@ -2,7 +2,7 @@ import { Component, EventEmitter, inject, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { Observable } from 'rxjs';
-import { ConditionsAndZip } from '../conditions-and-zip.type';
+import { ConditionsAndZip } from '../models/conditions-and-zip.type';
 import { selectConditions } from '../store/selectors/weather.selectors';
 import { WeatherService } from '../weather.service';
 
