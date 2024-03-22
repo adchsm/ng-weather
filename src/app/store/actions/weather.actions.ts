@@ -28,6 +28,21 @@ export const removeZipcodeSuccess = createAction(
   props<{ index: number }>()
 );
 
+export const updateZipcode = createAction(
+  `[${WEATHER_CONSTANTS.STORE_KEY}] update zipcode`,
+  props<{ zipcode: string }>()
+);
+
+export const updateZipcodeSuccess = createAction(
+  `[${WEATHER_CONSTANTS.STORE_KEY}] update zipcode success`,
+  props<{ conditionsAndZip: ConditionsAndZip }>()
+);
+
+export const updateZipcodeFailure = createAction(
+  `[${WEATHER_CONSTANTS.STORE_KEY}] update zipcode failure`,
+  props<{ error: any }>()
+);
+
 export const startPolling = createAction(
   `[${WEATHER_CONSTANTS.STORE_KEY}] start polling`,
   props<{ zipcode: string }>()

@@ -14,6 +14,9 @@ import {
   removeZipcodeSuccess,
   startPolling,
   stopPolling,
+  updateZipcode,
+  updateZipcodeFailure,
+  updateZipcodeSuccess,
 } from '../actions/weather.actions';
 import { selectConditionByIndex, selectZipcodes } from '../selectors/weather.selectors';
 
@@ -54,6 +57,18 @@ export class WeatherEffects {
     )
   );
 
+  updateZipcode$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(updateZipcode),
+      mergeMap(({ zipcode }) =>
+        this.weatherService.getCurrentConditions(zipcode).pipe(
+          map((data) => updateZipcodeSuccess({ conditionsAndZip: { zip: zipcode, data } })),
+          catchError((error) => of(updateZipcodeFailure({ error })))
+        )
+      )
+    )
+  );
+
   updateLocalStorage$ = createEffect(
     () =>
       this.actions$.pipe(
@@ -82,25 +97,24 @@ export class WeatherEffects {
     )
   );
 
-  startPolling$ = createEffect(
-    () =>
-      this.actions$.pipe(
-        ofType(startPolling),
-        mergeMap(({ zipcode }) =>
-          interval(WEATHER_CONSTANTS.REFRESH_TIME)
-            .pipe(
-              takeUntil(
-                this.actions$.pipe(
-                  ofType(stopPolling),
-                  filter((z) => zipcode === z.zipcode),
-                  tap((z) => console.log('Stop polling: ', z.zipcode))
-                )
+  startPolling$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(startPolling),
+      mergeMap(({ zipcode }) =>
+        interval(WEATHER_CONSTANTS.REFRESH_TIME)
+          .pipe(
+            takeUntil(
+              this.actions$.pipe(
+                ofType(stopPolling),
+                filter((z) => zipcode === z.zipcode),
+                tap((z) => console.log('Stop polling: ', z.zipcode))
               )
-            )
-            .pipe(tap(() => console.log('Poll: ', zipcode)))
-        )
-      ),
-    { dispatch: false }
+            ),
+            map(() => updateZipcode({ zipcode }))
+          )
+          .pipe(tap(() => console.log('Poll: ', zipcode)))
+      )
+    )
   );
 
   constructor(
