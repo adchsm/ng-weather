@@ -1,3 +1,36 @@
+# Notes from the author
+
+Hi there 👋
+
+**Some notes, assumptions and quirks**
+
+- If you close the app tab or the browser, and fire it up again, it will re-query the endpoints. If this is an issue, please let me know - as I'll be more than happy to make any necessary changes to pass. I'm off on holiday tomorrow (Tuesday 26th), so I hope it would be ok to make those changes when I return in early April. I would backup the applications state in local storage and rehydrate the app when initialised.
+- The refresh time is configurable in the UI in the demo section at the bottom on the main page. The minimum amount is 2000ms.
+- Aside from watching the network tab to see requests, you can also check the console, as it logs when polling starts, stops and each time it polls.
+- You can inspect the applications state using the Redux Chrome extension.
+- Finally the app has been stood up on Github pages, if you have any problems accessing it, please let me know.
+
+**Step 1**
+
+- The locationService has largely become a local storage service, as the zipcodes are locally managed in the app using ngrx. This also allows us to utilise both services without them having any knowledge of each other.
+
+**Step 2**
+
+- I've created a tabs component which I've demoed in two ways: 1) using the weather cards, and 2) using a static array of objects in the demo section.
+- The tabs component handles the navigation between tabs, and on removal, the tabs component emits the index of the tab removed to the parent to manipulate handle the data - the tabs component shouldn't have knowledge of, or manage the state.
+
+**Step 3**
+
+- I've illustrated a few ways of caching and refreshing data:
+- On the main page, an interval timer is setup using an ngrx effect. These will continue to poll the API at the rate of the configurable refresh time.
+- When navigating to a full 5 day forecast, the data is retrieved and stored with a time stamp. This data isn't refreshed until the user navigates back to that page, and only then if more time than the refresh time has passed.
+
+Thank you so much, it was a great exercise. I'd be thrilled to talk you through the codebase, answer any questions you have and make any additions and improvements necessary.
+
+All the best,
+
+Adam
+
 # NgWeather
 
 An app that showcases how to build a simple app with Angular (running on 14.x)
