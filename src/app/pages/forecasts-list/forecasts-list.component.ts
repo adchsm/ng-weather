@@ -2,9 +2,9 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { Observable, map } from 'rxjs';
 import { Forecast } from '../../models/forecast.type';
+import { WeatherService } from '../../services/weather.service';
 import { getForecast } from '../../store/actions/weather.actions';
 import { selectForecastByZip } from '../../store/selectors/weather.selectors';
-import { WeatherService } from '../../weather.service';
 
 @Component({
   selector: 'app-forecasts-list',

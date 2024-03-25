@@ -1,7 +1,7 @@
 import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 import { ConditionsAndZip } from '../../models/conditions-and-zip.type';
-import { WeatherService } from '../../weather.service';
+import { WeatherService } from '../../services/weather.service';
 
 @Component({
   selector: 'app-current-conditions',

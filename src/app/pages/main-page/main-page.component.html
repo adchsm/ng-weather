@@ -1,4 +1,6 @@
 <div class="container-fluid">
+  <h1>Weather app</h1>
+
   <app-zipcode-entry (locationAdded)="addLocation($event)"> </app-zipcode-entry>
 
   <app-current-conditions
@@ -6,9 +8,7 @@
     (zipcodeRemoved)="removeLocation($event)"
   ></app-current-conditions>
 
-  <app-tabs-container (tabRemoved)="testRemoveTab($event)">
-    @for (tab of testTabs; track $index) {
-    <app-tab [title]="tab.title">{{ tab.content }}</app-tab>
-    }
-  </app-tabs-container>
+  <hr />
+
+  <app-test-area></app-test-area>
 </div>

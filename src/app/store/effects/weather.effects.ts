@@ -3,9 +3,8 @@ import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
 import { differenceInMilliseconds } from 'date-fns';
 import { catchError, filter, interval, map, mergeMap, of, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
-import { WEATHER_CONSTANTS } from '../../constants/weather.constants';
-import { LocationService } from '../../location.service';
-import { WeatherService } from '../../weather.service';
+import { LocationService } from '../../services/location.service';
+import { WeatherService } from '../../services/weather.service';
 import {
   addZipcode,
   addZipcodeFailure,
@@ -18,11 +17,18 @@ import {
   removeZipcodeSuccess,
   startPolling,
   stopPolling,
+  updateRefreshTime,
   updateZipcode,
   updateZipcodeFailure,
   updateZipcodeSuccess,
 } from '../actions/weather.actions';
-import { selectConditionByIndex, selectForecastByZip, selectZipcodes } from '../selectors/weather.selectors';
+import {
+  selectConditionByIndex,
+  selectForecastByZipAndRefreshTime,
+  selectRefreshTime,
+  selectZipcodes,
+  selectZipcodesAndRefreshTime,
+} from '../selectors/weather.selectors';
 
 @Injectable()
 export class WeatherEffects {
@@ -86,7 +92,8 @@ export class WeatherEffects {
   mapAddToStartPolling = createEffect(() =>
     this.actions$.pipe(
       ofType(addZipcodeSuccess),
-      map(({ conditionsAndZip }) => startPolling({ zipcode: conditionsAndZip.zip }))
+      withLatestFrom(this.store.select(selectRefreshTime)),
+      map(([{ conditionsAndZip }, refreshTime]) => startPolling({ zipcode: conditionsAndZip.zip, refreshTime }))
     )
   );
 
@@ -104,19 +111,20 @@ export class WeatherEffects {
   startPolling$ = createEffect(() =>
     this.actions$.pipe(
       ofType(startPolling),
-      mergeMap(({ zipcode }) =>
-        interval(WEATHER_CONSTANTS.REFRESH_TIME)
+      tap(({ zipcode, refreshTime }) => console.log(`Start polling ${zipcode} every ${refreshTime}ms`)),
+      mergeMap(({ zipcode, refreshTime }) =>
+        interval(refreshTime)
           .pipe(
             takeUntil(
               this.actions$.pipe(
                 ofType(stopPolling),
                 filter((z) => zipcode === z.zipcode),
-                tap((z) => console.log('Stop polling: ', z.zipcode))
+                tap((z) => console.log(`Stop polling ${z.zipcode} `))
               )
             ),
             map(() => updateZipcode({ zipcode }))
           )
-          .pipe(tap(() => console.log('Poll: ', zipcode)))
+          .pipe(tap(() => console.log(`Polling ${zipcode}`)))
       )
     )
   );
@@ -124,16 +132,18 @@ export class WeatherEffects {
   getForecast$ = createEffect(() =>
     this.actions$.pipe(
       ofType(getForecast),
-      concatLatestFrom(({ zipcode }) => this.store.select(selectForecastByZip(zipcode))),
-      filter(([{ zipcode }, forecast]) => {
+      concatLatestFrom(({ zipcode }) => this.store.select(selectForecastByZipAndRefreshTime(zipcode))),
+      tap(([{ zipcode }, { forecast, refreshTime }]) => console.log({ zipcode, forecast, refreshTime })),
+      filter(([{ zipcode }, { forecast, refreshTime }]) => {
         if (!forecast) {
           // We don't have this forecast yet, pass the filter
           return true;
         } else {
           // We already have this forecast, was the cache time greater time ago than the refresh time?
-          return differenceInMilliseconds(forecast?.cacheTime, new Date()) > WEATHER_CONSTANTS.REFRESH_TIME;
+          return differenceInMilliseconds(new Date(), forecast?.cacheTime) > refreshTime;
         }
       }),
+      tap(([{ zipcode }, forecast]) => console.log(`No cached data, or cache expired for ${zipcode}`)),
       mergeMap(([{ zipcode }, forecast]) =>
         this.weatherService.getForecast(zipcode).pipe(
           map((data) => getForecastSuccess({ forecastAndZip: { zip: zipcode, data, cacheTime: new Date() } })),
@@ -141,6 +151,21 @@ export class WeatherEffects {
         )
       )
     )
+  );
+
+  updateRefreshTime$ = createEffect(
+    () =>
+      this.actions$.pipe(
+        ofType(updateRefreshTime),
+        withLatestFrom(this.store.select(selectZipcodesAndRefreshTime)),
+        tap(([action, { zipcodes, refreshTime }]) => {
+          (zipcodes ?? []).forEach((zipcode) => {
+            this.store.dispatch(stopPolling({ zipcode }));
+            this.store.dispatch(startPolling({ zipcode, refreshTime }));
+          });
+        })
+      ),
+    { dispatch: false }
   );
 
   constructor(

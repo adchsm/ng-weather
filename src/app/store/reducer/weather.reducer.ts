@@ -1,15 +1,20 @@
 import { createReducer, on } from '@ngrx/store';
+import { WEATHER_CONSTANTS } from '../../constants/weather.constants';
 import { WeatherState } from '../../models/weather.models';
 import {
   addZipcodeSuccess,
   getForecastSuccess,
   removeZipcodeSuccess,
+  updateRefreshTime,
   updateZipcodeSuccess,
 } from '../actions/weather.actions';
 
 export const initialState: WeatherState = {
   conditionsAndZips: [],
   forecasts: [],
+  config: {
+    refreshTime: WEATHER_CONSTANTS.INITIAL_REFRESH_TIME,
+  },
 };
 
 export const weatherReducer = createReducer(
@@ -40,5 +45,6 @@ export const weatherReducer = createReducer(
     }
 
     return { ...state, forecasts };
-  })
+  }),
+  on(updateRefreshTime, (state, { refreshTime }) => ({ ...state, config: { ...state.config, refreshTime } }))
 );

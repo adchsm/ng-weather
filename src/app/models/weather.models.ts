@@ -4,6 +4,9 @@ import { Forecast } from './forecast.type';
 export interface WeatherState {
   conditionsAndZips: ConditionsAndZip[];
   forecasts: ForecastAndZip[];
+  config: {
+    refreshTime: number;
+  };
 }
 
 export interface ForecastAndZip {

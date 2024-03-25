@@ -12,12 +12,6 @@ import { selectConditions } from '../../store/selectors/weather.selectors';
 export class MainPageComponent {
   protected currentConditionsByZip$: Observable<ConditionsAndZip[]> = this.store.select(selectConditions);
 
-  protected testTabs: { title: string; content: string }[] = [
-    { title: 'Tab 1', content: 'Lets test out tab usage in a different way' },
-    { title: 'Tab 2', content: 'Content for the second tab' },
-    { title: 'Tab 3', content: 'Content for the third tab' },
-  ];
-
   constructor(private store: Store) {}
 
   protected addLocation(zipcode: string): void {
@@ -26,9 +20,5 @@ export class MainPageComponent {
 
   protected removeLocation(index: number): void {
     this.store.dispatch(removeZipcode({ index }));
-  }
-
-  protected testRemoveTab(index: number): void {
-    this.testTabs.splice(index, 1);
   }
 }

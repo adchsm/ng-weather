@@ -1,0 +1,36 @@
+<h2>Testing area</h2>
+
+<h3>Tabs</h3>
+
+<app-tabs-container (tabRemoved)="testRemoveTab($event)">
+  @for (tab of testTabs; track $index) {
+  <app-tab [title]="tab.title">{{ tab.content }}</app-tab>
+  }
+</app-tabs-container>
+
+<h3>Cache/refresh timer</h3>
+
+<form [formGroup]="form">
+  <div class="form-group" [class.has-error]="!form.controls.refreshTime.valid">
+    <label for="refreshTime">Refresh time (in ms)</label>
+    <input
+      formControlName="refreshTime"
+      type="number"
+      class="form-control"
+      id="refreshTime"
+      placeholder="Refresh time"
+      style="max-width: 200px"
+    />
+    <div>
+      <small class="form-text text-danger" *ngIf="!form.controls.refreshTime.valid">
+        Please enter a valid number over 2000
+      </small>
+    </div>
+    <div>
+      <small class="=form-text text-muted">
+        Enter the refresh time in ms. <br />
+        Examples: 2000: 2 seconds, 60000: 1 minute, 300000: 5 minutes, 3600000: 1 hour, 7200000: 2 hours
+      </small>
+    </div>
+  </div>
+</form>

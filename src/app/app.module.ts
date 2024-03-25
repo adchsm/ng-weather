@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { HttpClientModule } from '@angular/common/http';
@@ -15,12 +15,13 @@ import { CurrentConditionsComponent } from './components/current-conditions/curr
 import { TabComponent } from './components/tabs/tab/tab.component';
 import { TabsContainerComponent } from './components/tabs/tabs-container/tabs-container.component';
 import { ZipcodeEntryComponent } from './components/zipcode-entry/zipcode-entry.component';
-import { LocationService } from './location.service';
+import { TestAreaComponent } from './containers/test-area/test-area.component';
 import { ForecastsListComponent } from './pages/forecasts-list/forecasts-list.component';
 import { MainPageComponent } from './pages/main-page/main-page.component';
+import { LocationService } from './services/location.service';
+import { WeatherService } from './services/weather.service';
 import { WeatherEffects } from './store/effects/weather.effects';
 import { weatherReducer } from './store/reducer/weather.reducer';
-import { WeatherService } from './weather.service';
 
 @NgModule({
   declarations: [
@@ -31,10 +32,12 @@ import { WeatherService } from './weather.service';
     MainPageComponent,
     TabsContainerComponent,
     TabComponent,
+    TestAreaComponent,
   ],
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpClientModule,
     RouterModule,
     routing,

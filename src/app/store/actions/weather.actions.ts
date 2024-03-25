@@ -54,7 +54,7 @@ export const updateZipcodeFailure = createAction(
 
 export const startPolling = createAction(
   `[${WEATHER_CONSTANTS.STORE_KEY}] start polling`,
-  props<{ zipcode: string }>()
+  props<{ zipcode: string; refreshTime: number }>()
 );
 
 export const stopPolling = createAction(`[${WEATHER_CONSTANTS.STORE_KEY}] stop polling`, props<{ zipcode: string }>());
@@ -73,4 +73,13 @@ export const getForecastSuccess = createAction(
 export const getForecastFailure = createAction(
   `[${WEATHER_CONSTANTS.STORE_KEY}] get forecast failure`,
   props<{ error: any }>()
+);
+
+/**
+ * Config
+ */
+
+export const updateRefreshTime = createAction(
+  `[${WEATHER_CONSTANTS.STORE_KEY}] update refresh time`,
+  props<{ refreshTime: number }>()
 );
