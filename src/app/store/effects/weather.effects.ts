@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Actions, concatLatestFrom, createEffect, ofType } from '@ngrx/effects';
 import { Store } from '@ngrx/store';
+import { differenceInMilliseconds } from 'date-fns';
 import { catchError, filter, interval, map, mergeMap, of, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { WEATHER_CONSTANTS } from '../../constants/weather.constants';
 import { LocationService } from '../../location.service';
@@ -9,6 +10,9 @@ import {
   addZipcode,
   addZipcodeFailure,
   addZipcodeSuccess,
+  getForecast,
+  getForecastFailure,
+  getForecastSuccess,
   getZipcodesFromLocalStorage,
   removeZipcode,
   removeZipcodeSuccess,
@@ -18,7 +22,7 @@ import {
   updateZipcodeFailure,
   updateZipcodeSuccess,
 } from '../actions/weather.actions';
-import { selectConditionByIndex, selectZipcodes } from '../selectors/weather.selectors';
+import { selectConditionByIndex, selectForecastByZip, selectZipcodes } from '../selectors/weather.selectors';
 
 @Injectable()
 export class WeatherEffects {
@@ -113,6 +117,28 @@ export class WeatherEffects {
             map(() => updateZipcode({ zipcode }))
           )
           .pipe(tap(() => console.log('Poll: ', zipcode)))
+      )
+    )
+  );
+
+  getForecast$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(getForecast),
+      concatLatestFrom(({ zipcode }) => this.store.select(selectForecastByZip(zipcode))),
+      filter(([{ zipcode }, forecast]) => {
+        if (!forecast) {
+          // We don't have this forecast yet, pass the filter
+          return true;
+        } else {
+          // We already have this forecast, was the cache time greater time ago than the refresh time?
+          return differenceInMilliseconds(forecast?.cacheTime, new Date()) > WEATHER_CONSTANTS.REFRESH_TIME;
+        }
+      }),
+      mergeMap(([{ zipcode }, forecast]) =>
+        this.weatherService.getForecast(zipcode).pipe(
+          map((data) => getForecastSuccess({ forecastAndZip: { zip: zipcode, data, cacheTime: new Date() } })),
+          catchError((error) => of(getForecastFailure({ error })))
+        )
       )
     )
   );

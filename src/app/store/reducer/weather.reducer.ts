@@ -1,9 +1,15 @@
 import { createReducer, on } from '@ngrx/store';
 import { WeatherState } from '../../models/weather.models';
-import { addZipcodeSuccess, removeZipcodeSuccess, updateZipcodeSuccess } from '../actions/weather.actions';
+import {
+  addZipcodeSuccess,
+  getForecastSuccess,
+  removeZipcodeSuccess,
+  updateZipcodeSuccess,
+} from '../actions/weather.actions';
 
 export const initialState: WeatherState = {
   conditionsAndZips: [],
+  forecasts: [],
 };
 
 export const weatherReducer = createReducer(
@@ -22,5 +28,17 @@ export const weatherReducer = createReducer(
     const index = conditionsAndZips.findIndex((c) => c.zip === conditionsAndZip.zip);
     conditionsAndZips.splice(index, 1, conditionsAndZip);
     return { ...state, conditionsAndZips };
+  }),
+  on(getForecastSuccess, (state, { forecastAndZip }) => {
+    const forecasts = [...state.forecasts];
+    const index = forecasts.findIndex((c) => c.zip === forecastAndZip.zip);
+
+    if (index >= 0) {
+      forecasts.splice(index, 1, forecastAndZip);
+    } else {
+      forecasts.push(forecastAndZip);
+    }
+
+    return { ...state, forecasts };
   })
 );

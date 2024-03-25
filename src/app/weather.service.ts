@@ -2,13 +2,13 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { HttpClient } from '@angular/common/http';
-import { Forecast } from './forecasts-list/forecast.type';
 import { CurrentConditions } from './models/current-conditions.type';
+import { Forecast } from './models/forecast.type';
 
 @Injectable()
 export class WeatherService {
   static URL = 'http://api.openweathermap.org/data/2.5';
-  static APPID = '8f89eb41dd837a69826719d17d9f2ff3'; // '5a4b2d457ecbef9eb2a71e480b947604';
+  static APPID = '5a4b2d457ecbef9eb2a71e480b947604'; // 8f89eb41dd837a69826719d17d9f2ff3
   static ICON_URL =
     'https://raw.githubusercontent.com/udacity/Sunshine-Version-2/sunshine_master/app/src/main/res/drawable-hdpi/';
 
