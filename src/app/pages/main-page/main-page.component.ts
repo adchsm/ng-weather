@@ -1,12 +1,17 @@
 import { Component } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { addZipcode, removeZipcode } from '../store/actions/weather.actions';
+import { Observable } from 'rxjs';
+import { ConditionsAndZip } from '../../models/conditions-and-zip.type';
+import { addZipcode, removeZipcode } from '../../store/actions/weather.actions';
+import { selectConditions } from '../../store/selectors/weather.selectors';
 
 @Component({
   selector: 'app-main-page',
   templateUrl: './main-page.component.html',
 })
 export class MainPageComponent {
+  protected currentConditionsByZip$: Observable<ConditionsAndZip[]> = this.store.select(selectConditions);
+
   protected testTabs: { title: string; content: string }[] = [
     { title: 'Tab 1', content: 'Lets test out tab usage in a different way' },
     { title: 'Tab 2', content: 'Content for the second tab' },

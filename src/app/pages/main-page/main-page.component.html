@@ -1,7 +1,10 @@
 <div class="container-fluid">
   <app-zipcode-entry (locationAdded)="addLocation($event)"> </app-zipcode-entry>
 
-  <app-current-conditions (zipcodeRemoved)="removeLocation($event)"></app-current-conditions>
+  <app-current-conditions
+    [currentConditionsByZip]="currentConditionsByZip$ | async"
+    (zipcodeRemoved)="removeLocation($event)"
+  ></app-current-conditions>
 
   <app-tabs-container (tabRemoved)="testRemoveTab($event)">
     @for (tab of testTabs; track $index) {

@@ -1,10 +1,7 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
-import { Store } from '@ngrx/store';
-import { Observable } from 'rxjs';
-import { ConditionsAndZip } from '../models/conditions-and-zip.type';
-import { selectConditions } from '../store/selectors/weather.selectors';
-import { WeatherService } from '../weather.service';
+import { ConditionsAndZip } from '../../models/conditions-and-zip.type';
+import { WeatherService } from '../../weather.service';
 
 @Component({
   selector: 'app-current-conditions',
@@ -12,13 +9,11 @@ import { WeatherService } from '../weather.service';
   styleUrls: ['./current-conditions.component.css'],
 })
 export class CurrentConditionsComponent {
+  @Input() currentConditionsByZip: ConditionsAndZip[] = [];
   @Output() zipcodeRemoved: EventEmitter<number> = new EventEmitter();
 
   private router = inject(Router);
-  protected currentConditionsByZip$: Observable<ConditionsAndZip[]> = this.store.select(selectConditions);
   protected weatherService = inject(WeatherService);
-
-  constructor(private store: Store) {}
 
   showForecast(zipcode: string) {
     this.router.navigate(['/forecast', zipcode]);
